@@ -1,6 +1,7 @@
 @page "/delete"
 @using System.Net.Http
 
+@inject HttpClient Http
 @inject HttpClient client
 
 @using Newtonsoft.Json
@@ -31,12 +32,18 @@
                     <tr class="justify-content-center">
                         <td>@storeapp.Id</td>
                         <td>@storeapp.Name</td>
-                        <td><a href="#" onclick="()=>deleteRecord(storeapp)">Delete</a></td><!--added delete link to table row-->
+
+                        <!--      comment about code below  -->
+
+                        <td><a href="/delete"@onclick="@(async () => await deleteRecord(storeapp))">Delete</a></td><!--added delete link to table row-->
+              
                     </tr>
                     }
                 </tbody>
             </table>
         }
+
+   
         @if (!StoreApps.Any()) {
             <div class="justify-content-center">
                 <h5>No records to show</h5>
@@ -48,19 +55,23 @@
 
 @code {
 
+    private const string ServiceEndpoint = "https://localhost:44308/api/StoreApps";
     string responseBody = "";
     List<StoreApp> StoreApps = new List<StoreApp>();
 
     protected override async Task OnInitializedAsync() {
         //changed path to url of API which is running on different port
-        var apiName = "https://localhost:44308/api/StoreApps/FirstTen";
-        var httpResponse = await client.GetAsync(apiName);
+        var httpResponse = await client.GetAsync($"{ServiceEndpoint}/FirstTen");
 
         if (httpResponse.IsSuccessStatusCode) {
             responseBody = await httpResponse.Content.ReadAsStringAsync();
             StoreApps = JsonConvert.DeserializeObject<List<StoreApp>>(responseBody);
             StateHasChanged();
         }
+    }
 
+    private async Task deleteRecord(StoreApp storeapp) {
+        var httpResponse = await client.DeleteAsync($"{ServiceEndpoint}/{storeapp.Id}");
+        await OnInitializedAsync();
     }
 }
