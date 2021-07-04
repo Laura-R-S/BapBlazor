@@ -1,10 +1,25 @@
 @page "/"
 
 <h1>Meet the team</h1>
-
+<style>
+    img{
+        border-radius: 8px;
+        box-sizing: border-box;
+    }
+    .row::after{
+        content: "";
+        clear:both;
+        display: table;
+    }
+    .column {
+        float: left;
+        width: 40%;
+        padding: 8px;
+    }
+</style>
 <div class="row">
     <div class="column">
-        <img src="https://github.com/Laura-R-S/BapBlazor/blob/master/images/alex.jpg?raw=true" class="card-img-top" alt="Alex picture" />
+        <img src="https://github.com/Laura-R-S/BapBlazor/blob/master/images/alex.jpg?raw=true" class="card-img-top" alt="Alex picture" style="width:25%;" />
         <div class="card-body">
             <h5 class="card-title">Alexandra Cameron</h5>
             <p class="card-text">Modern Application Consultant</p>
@@ -13,7 +28,7 @@
         </div>
     </div>
     <div class="column">
-        <img src="https://github.com/Laura-R-S/BapBlazor/blob/master/images/aoife.jpg?raw=true" class="card-img-top" alt="Aoife picture" />
+        <img src="https://github.com/Laura-R-S/BapBlazor/blob/master/images/aoife.jpg?raw=true" class="card-img-top" alt="Aoife picture" style="width:25%;"/>
         <div class="card-body">
             <h5 class="card-title">Aoife McGurgan</h5>
             <p class="card-text">Modern Application Consultant</p>
@@ -22,7 +37,7 @@
         </div>
     </div>
     <div class="column">
-        <img src="https://github.com/Laura-R-S/BapBlazor/blob/master/images/laura%23.jpg?raw=true" class="card-img-top" alt="Laura picture" />
+        <img src="https://github.com/Laura-R-S/BapBlazor/blob/master/images/laura%23.jpg?raw=true" class="card-img-top" alt="Laura picture" style="width:25%;" />
         <div class="card-body">
             <h5 class="card-title">Laura Tinney</h5>
             <p class="card-text">Modern Application Consultant</p>
@@ -31,7 +46,7 @@
         </div>
     </div>
     <div class="column">
-        <img src="https://github.com/Laura-R-S/BapBlazor/blob/master/images/simana.png?raw=true" class="card-img-top" alt="Simana picture" />
+        <img src="https://github.com/Laura-R-S/BapBlazor/blob/master/images/simana.png?raw=true" class="card-img-top" alt="Simana picture" style="width:25%;"/>
         <div class="card-body">
             <h5 class="card-title">Simana Ale</h5>
             <p class="card-text">Modern Application Consultant</p>
