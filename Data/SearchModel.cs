@@ -8,5 +8,6 @@ namespace BapBlazor.Data
     public class SearchModel
     {
         public string InputValue { get; set; }
+
     }
 }

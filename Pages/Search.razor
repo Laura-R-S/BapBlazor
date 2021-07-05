@@ -140,12 +140,14 @@
         else
         {
 
-            StoreApps = AllStoreApps.Where(app => app.Name == searchModel.InputValue).ToList();
+            StoreApps = AllStoreApps.Where(app => app.Name.ToUpper() == searchModel.InputValue.ToUpper()).ToList();
 
             if (StoreApps.Count() == 0)
             {
-                StoreApps = AllStoreApps.Where(app => app.Category == searchModel.InputValue).ToList();
+                StoreApps = AllStoreApps.Where(app => app.Category.ToUpper() == searchModel.InputValue.ToUpper()).ToList();
             }
+
+
             Console.WriteLine(searchModel.InputValue);
 
         }
