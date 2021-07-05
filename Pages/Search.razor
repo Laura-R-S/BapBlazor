@@ -23,18 +23,13 @@
 </ul>
 
 
-<EditForm Model="@searchModel" OnValidSubmit="@HandleValidSubmit">
+
+<EditForm Model="@searchModel" OnValidSubmit="@HandleSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-
-
-    <InputText id="name" @bind-Value="searchModel.Name" />
-
-
-
-    <button type="submit" @onclick="@EnterUserInput">Search</button>
-
+    <InputText id="name" @bind-Value="searchModel.InputValue" />
+    <button type="submit">Search</button>
 
 
 </EditForm>
@@ -44,15 +39,10 @@
 <div class="container-fluid" style="background-color:cornsilk">
 
 
-
     <div class="row justify-content-center" style="margin-bottom:50px">
         <h3 class="text-center" style="color:cornflowerblue">Microsoft Store Apps:<br />App Data</h3>
 
-
-
     </div>
-
-
 
     <div class="row" style="margin:25px;">
 
@@ -60,46 +50,47 @@
 
         @if (StoreApps != null)
         {
-<table class="table table-bordered table-striped">
-    <thead class="thead-light">
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Rating</th>
-            <th>People</th>
-            <th>Category</th>
-            <th>Date</th>
-            <th>Price</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var storeapp in StoreApps)
-        {
+            <table class="table table-bordered table-striped">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Rating</th>
+                        <th>People</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var storeapp in StoreApps)
+                    {
 
 
 
-<tr class="justify-content-center">
-    <td>@storeapp.Id</td>
-    <td>@storeapp.Name</td>
-    <td>@storeapp.Rating</td>
-    <td>@storeapp.People</td>
-    <td>@storeapp.Category</td>
-    <td>@storeapp.Date</td>
-    <td>@storeapp.Price</td>
+                        <tr class="justify-content-center">
+                            <td>@storeapp.Id</td>
+                            <td>@storeapp.Name</td>
+                            <td>@storeapp.Rating</td>
+                            <td>@storeapp.People</td>
+                            <td>@storeapp.Category</td>
+                            <td>@storeapp.Date</td>
+                            <td>@storeapp.Price</td>
 
 
 
-</tr>}
-    </tbody>
-</table>}
+                        </tr>
+                    }
+                </tbody>
+            </table>}
 
 
 
         @if (StoreApps == null)
         {
-<div class="justify-content-center">
-    <h5>No records to show</h5>
-</div>}
+            <div class="justify-content-center">
+                <h5>No records to show</h5>
+            </div>}
 
 
 
@@ -111,75 +102,55 @@
 
 
 
-@code { public SearchModel searchModel = new();
-            public List<StoreApp> StoreApps { get; set; }
+
+@code {
+
+    SearchModel searchModel = new SearchModel();
 
 
+    string responseBody = " ";
+    List<StoreApp> StoreApps = new List<StoreApp>();
+    List<StoreApp> AllStoreApps = new List<StoreApp>();
 
-            //if form entry is valid run this method
-            private void HandleValidSubmit()
-            {
-                Logger.LogInformation("HandleValidSubmit called");
-                Logger.LogInformation(searchModel.Name);
+    protected override async Task OnInitializedAsync()
+    {
+        //changed path to url of API which is running on different port
+        var apiName = "https://team2-api.azurewebsites.net/api/StoreApps/";
 
+        var httpResponse = await client.GetAsync(apiName);
 
-
-            }
-
-
-
-            private async void EnterUserInput()
-            {
-                await GetSearch(searchModel.Name);
-            }
-
-
-
-
-            string responseBody = "";
-            List<StoreApp> SearchResults = new List<StoreApp>();
-
-
-
-            public async Task GetSearch(string search)
-            {
-                searchModel = new();
-                var apiName = "api/StoreApps/";
-                apiName += search;
-                var httpResponse = await client.GetAsync(apiName);
-
-
-
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    responseBody = await httpResponse.Content.ReadAsStringAsync();
-                    StoreApps = JsonConvert.DeserializeObject<List<StoreApp>>(responseBody);
-                    StateHasChanged();
-                }
-
-
-
-            } }
-
-
-
-@*@code {
-
-        string responseBody = "";
-        List<StoreApp> StoreApps = new List<StoreApp>();
-
-        protected override async Task OnInitializedAsync()
+        if (httpResponse.IsSuccessStatusCode)
         {
-            //changed path to url of API which is running on different port
-            var apiName = "https://team2-api.azurewebsites.net/api/StoreApps/FirstTen";
-            var httpResponse = await client.GetAsync(apiName);
-
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                responseBody = await httpResponse.Content.ReadAsStringAsync();
-                StoreApps = JsonConvert.DeserializeObject<List<StoreApp>>(responseBody);
-                StateHasChanged();
-            }
+            responseBody = await httpResponse.Content.ReadAsStringAsync();
+            StoreApps = JsonConvert.DeserializeObject<List<StoreApp>>(responseBody);
+            AllStoreApps = StoreApps;
+            StateHasChanged();
 
         }
-    }*@
+
+    }
+    public void HandleSubmit()
+    {
+        if (searchModel.InputValue == "" || searchModel.InputValue == null || searchModel.InputValue == " ")
+        {
+            StoreApps = AllStoreApps;
+
+
+        }
+        else
+        {
+
+            StoreApps = AllStoreApps.Where(app => app.Name == searchModel.InputValue).ToList();
+
+            if (StoreApps.Count() == 0)
+            {
+                StoreApps = AllStoreApps.Where(app => app.Category == searchModel.InputValue).ToList();
+            }
+            Console.WriteLine(searchModel.InputValue);
+
+        }
+
+
+
+    }
+}
