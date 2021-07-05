@@ -8,12 +8,14 @@
 @using Data
 
 <div class="container-fluid">
+    <!--The container fluid is the class coming from Bootstrap -->
 
     <div class="row justify-content-center" style="margin-bottom:50px">
         <h3 class="text-center">Store Apps - First Ten Records</h3>
     </div>
 
     <div class="row" style="margin:25px;">
+        <!--this is checking if null undefined show nothing - at the start of load it is usually blank-->
         @if (StoreApps != null)
         {
             <table class="table table-bordered table-striped">
@@ -24,16 +26,18 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <!--For loop to iterate over store apps to display the apps -->
                     @foreach (var storeapp in StoreApps)
                     {
                         <tr class="justify-content-center">
                             <td>@storeapp.Id</td>
                             <td>@storeapp.Name</td>
+                            <!-- C# to output the id and name of the app which is from Store App class and here is where the getters and setters are defined -->
                         </tr>
                     }
                 </tbody>
             </table>
-        }
+        }     <!-- boolean expression to display No records message if the database contains no apps -->
         @if (!StoreApps.Any())
         {
             <div class="justify-content-center">
@@ -41,57 +45,57 @@
             </div>
         }
     </div>
-
+   
 </div>
 
 @code {
+    //  private string to store response body 
+    private string responseBody = "";
 
-    string responseBody = "";
+
+    private bool IsSortedAscending;
     List<StoreApp> StoreApps = new List<StoreApp>();
 
+    // OnInitializedAsync() to call request
     protected override async Task OnInitializedAsync()
     {
         //changed path to url of API which is running on different port
         var apiName = "https://localhost:44308/api/StoreApps/FirstTen";
+
+        // the api name (url) is passed into the GetAsync method and it will wait for a response before continuing
         var httpResponse = await client.GetAsync(apiName);
 
         if (httpResponse.IsSuccessStatusCode)
-        {
+        {  //// conditional statement to check if status code is successful (200)
+           // resposnseBody variable waits for the content
+           // once received it is passed onto JsonConvert 
+
             responseBody = await httpResponse.Content.ReadAsStringAsync();
             StoreApps = JsonConvert.DeserializeObject<List<StoreApp>>(responseBody);
+
+            // notifying UI to re-render 
             StateHasChanged();
         }
 
     }
 }
-<p>This component demonstrates sorting the dataset.</p>
-
-<p>One way to tackle this problem;</p>
-<ul>
-    <li>Start with pretty much the same code as FetchStoreApps.razor.</li>
-    <li>Turn your table headers into hyperlinks.</li>
-    <li>When you click on the table header use a method to sort your list accordingly.</li>
-    <li>StoreApps is not a simple list, it is a list of objects.</li>
-    <li>You will need to search on, "sorting a list by object property"</li>
-</ul>
-
 
 <table class="table">
     <thread>
-        </tr>
-        <td class="sort-link" @onclick=@(() => SortTable("ID"))>Id </td>
+        <tr>
+            <td class="sort-link" @onclick=@(() => SortTable("ID"))>Id </td>
 
-        <td class="sort-link" @onclick=@(() => SortTable("Name"))>Name </td>
+            <td class="sort-link" @onclick=@(() => SortTable("Name"))>Name </td>
 
-        <td class="sort-link" @onclick=@(() => SortTable("Rating"))>Rating </td>
+            <td class="sort-link" @onclick=@(() => SortTable("Rating"))>Rating </td>
 
-        <td class="sort-link" @onclick=@(() => SortTable("People"))>People </td>
+            <td class="sort-link" @onclick=@(() => SortTable("People"))>People </td>
 
-        <td class="sort-link" @onclick=@(() => SortTable("Category"))>Category </td>
+            <td class="sort-link" @onclick=@(() => SortTable("Category"))>Category </td>
 
-        <td class="sort-link" @onclick=@(() => SortTable("Date"))>Date </td>
+            <td class="sort-link" @onclick=@(() => SortTable("Date"))>Date </td>
 
-        <td class="sort-link" @onclick=@(() => SortTable("Price"))>Price </td>
+            <td class="sort-link" @onclick=@(() => SortTable("Price"))>Price </td>
 
 
         </tr>
@@ -99,7 +103,7 @@
 </table>
 
 
-<!--accessing objects in the storeApp class using the dot operator -->
+<!--accessing objects in the storeApp class using the dot operator. The Dot operator is used to assess class or structures.-->
 @foreach (var storeapp in StoreApps)
 {
     <table class="table">
@@ -117,7 +121,7 @@
     </table>
 }
 }
- 
+
 
 @code{
 
@@ -134,12 +138,16 @@
                 String formatted = dateNew.ToString("yyyy/MM/dd");
                 storeapp.Date = formatted;
             }
-            StoreApps = StoreApps.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x))
+            StoreApps = StoreApps.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x)).ToList();
         }
-        IsSortedAscending = !IsSortedAscending;
+        else
+        {
+            <!--Returns: true if the sort order is ascending -->
+            IsSortedAscending = !IsSortedAscending;
+        }
+
     }
 }
-
 
 
 
