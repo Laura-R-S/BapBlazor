@@ -62,6 +62,8 @@ namespace BapBlazor
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+
+                
             });
         }
     }
