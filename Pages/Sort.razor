@@ -11,7 +11,7 @@
    
 
     <div class="row justify-content-center" style="margin-bottom:50px">
-        <h3 class="text-center">Store Apps - First Ten Records</h3>
+        <h3 class="text-center">Sorting Store Apps</h3>
     </div>
 
     <div class="row" style="margin:25px;">
@@ -23,6 +23,11 @@
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
+                        <th>Rating</th>
+                        <th>People</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th>Price</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,7 +65,7 @@
     protected override async Task OnInitializedAsync()
     {
         //changed path to url of API which is running on different port
-        var apiName = "api/StoreApps/FirstTen";
+        var apiName = "https://team2-api.azurewebsites.net/api/StoreApps/";
 
         // the api name (url) is passed into the GetAsync method and it will wait for a response before continuing
         var httpResponse = await client.GetAsync(apiName);
