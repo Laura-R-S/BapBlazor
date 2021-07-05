@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-
+// get and set is executed when the property is assinged a new value. A property without a set is read only and a property without a get is write only.
  public class StoreApp
     {
         [JsonProperty("id")]
