@@ -75,11 +75,12 @@
         if (httpResponse.IsSuccessStatusCode) {
             responseBody = await httpResponse.Content.ReadAsStringAsync();
             StoreApps = JsonConvert.DeserializeObject<List<StoreApp>>(responseBody);
-            // method till notify the frontend a change has been made 
+            // method to notify the frontend a change has been made 
             StateHasChanged();
         }
     }
     // delete record method that takes in storeapp parameter 
+    // endpoint passed into DeletAsync method 
     private async Task deleteRecord(StoreApp storeapp) {
         var httpResponse = await client.DeleteAsync($"{ServiceEndpoint}/{storeapp.Id}");
         // calling method above --> OnInitializedAsync()
