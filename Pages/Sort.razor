@@ -8,14 +8,14 @@
 @using Data
 
 <div class="container-fluid">
-    <!--The container fluid is the class coming from Bootstrap -->
+   
 
     <div class="row justify-content-center" style="margin-bottom:50px">
         <h3 class="text-center">Store Apps - First Ten Records</h3>
     </div>
 
     <div class="row" style="margin:25px;">
-        <!--this is checking if null undefined show nothing - at the start of load it is usually blank-->
+       
         @if (StoreApps != null)
         {
             <table class="table table-bordered table-striped">
@@ -26,18 +26,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!--For loop to iterate over store apps to display the apps -->
+                   
                     @foreach (var storeapp in StoreApps)
                     {
                         <tr class="justify-content-center">
                             <td>@storeapp.Id</td>
                             <td>@storeapp.Name</td>
-                            <!-- C# to output the id and name of the app which is from Store App class and here is where the getters and setters are defined -->
+                            
                         </tr>
                     }
                 </tbody>
             </table>
-        }     <!-- boolean expression to display No records message if the database contains no apps -->
+        }    
         @if (!StoreApps.Any())
         {
             <div class="justify-content-center">
