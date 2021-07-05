@@ -6,16 +6,138 @@
 @using Newtonsoft.Json
 @using Data
 
-<h1>Pagination</h1>
+<div class="container-fluid">
+    <!--The container fluid is the class coming from Bootstrap -->
 
-<p>This component demonstrates pagination of the databaset.</p>
+    <div class="row justify-content-center" style="margin-bottom:50px">
+        <h3 class="text-center">Store Apps</h3>
+    </div>
 
-<p>One way to tackle this problem;</p>
-<ul>
-    <li>Start with pretty much the same code as FetchStoreApps.razor.</li>
-    <li>Add buttons to move between pages of records e.g. 25 records.</li>
-    <li>You could take inspiration from Counter.razor (increment and decrement a number).</li>
-    <li>You could use this number to control which items in your list are displayed.</li>
-    <li>Problems to solve are not going beyond the end of your list and decrementing less than zero.</li>
-</ul>
+    <div class="row" style="margin:25px;">
+        <!--this is checking if null undefined show nothing - at the start of load it is usually blank-->
+        @if (StoreApps != null) {
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!--For loop to iterate over store apps to display the apps -->
+                    @foreach (var storeapp in StoreApps) {
+                        <tr class="justify-content-center">
+                            <!-- C# to output the id and name of the app which is from Store App class where getters and setters are defined -->
+                            <td>@storeapp.Id</td>
+                            <td>@storeapp.Name</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        <!-- boolean expression to display No records message if the database contains no apps -->
+        @if (!StoreApps.Any()) {
+            <div class="justify-content-center">
+                <h5>No records to show</h5>
+            </div>
+        }
+    </div>
+
+    <div>
+        <!-- Bootstrap used to leverage styling and arrange and style buttons  -->
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item"><button class="page-link" @onclick="DecrementCount"> Previous</button></li>
+                <li class="page-item"><span class="page-link"> @CurrentCount</span></li>
+                <li class="page-item"><button class="page-link" @onclick="IncrementCount">Next</button></li>
+            </ul>
+        </nav>
+    </div>
+
+</div>
+
+
+
+@code {
+
+    // exmpty string to store response body 
+    string responseBody = "";
+
+    // url with pointing to TwentyFive apps on a page 
+    string apiUrl = "https://localhost:44308/api/StoreApps/TwentyFive";
+
+    // cnew global list to store specific range of apps
+    List<StoreApp> StoreApps = new List<StoreApp>();
+
+    //List<StoreApp> StoreAppRange = new List<StoreApp>(); 
+
+    // instantiating new object using StoreDetail class in StoreApps.cs
+    // StoreDetail class gets and sets updated list and total pagecount 
+    StoreDetail ResponseObj = new StoreDetail();
+
+    //current count variable, starts at page 1 
+    private int CurrentCount = 1;
+
+    // had to change to decimal as Math.floor threw an error when it was an int
+    // Cannot implicity convert type 'decimal' to 'int' 
+    private decimal resultCount = 25;
+    private decimal pageCount;
+
+
+    private async void requestTwentyFive() {
+        // changed path to url of API which is running on different port
+        // method is overridden with own implementation
+        // when method is run it sends an api request and waits for a response
+        var apiName = $"{apiUrl}/{CurrentCount}";
+
+        // the api name (url) is passed into the GetAsync method and it will wait for a response before continuing
+        var httpResponse = await client.GetAsync(apiName);
+
+        // conditional statement to check is status code is successful (200)
+        // resposnseBody variable waits for the content
+        // once received it is passed onto JsonConvert 
+        if (httpResponse.IsSuccessStatusCode) {
+            responseBody = await httpResponse.Content.ReadAsStringAsync();
+            ResponseObj = JsonConvert.DeserializeObject<StoreDetail>(responseBody);
+
+            // accessing child objects (AppList & TotalPageCount) in StoreDetail class using the dot opertor 
+            StoreApps = ResponseObj.AppList;
+
+            // keeping count of the total pages to allow front end pagination to calulate last page
+            pageCount = ResponseObj.TotalPageCount;
+
+            // notifying UI to re-render 
+            StateHasChanged();
+
+        }
+
+    }
+
+    // OnInitializedAsync() to call requestTwentyFive()
+    protected override async Task OnInitializedAsync() {
+
+        requestTwentyFive();
+
+    }
+
+    // method to increment pages and calling requestTwentyFive() go update db 
+    // conditional statment to prevent current count going into negitive numbers 
+    private void IncrementCount() {
+        if (CurrentCount < pageCount) {
+            CurrentCount++;
+            requestTwentyFive();
+        }
+    }
+
+    // method to decrement pages 
+    // current count always needs to be greater than page 1 
+    private void DecrementCount() {
+        if (CurrentCount > 1) {
+            CurrentCount--;
+            requestTwentyFive();
+        }
+    }
+
+}
 
