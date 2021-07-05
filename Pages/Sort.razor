@@ -46,7 +46,9 @@
 
 @code {
 
-    string responseBody = "";
+    private string responseBody = "";
+    private bool IsSortedAscending;
+    private string CurrentSortColumn;
     List<StoreApp> StoreApps = new List<StoreApp>();
 
     protected override async Task OnInitializedAsync()
@@ -78,7 +80,7 @@
 
 <table class="table">
     <thread>
-        </tr>
+        <tr>
         <td class="sort-link" @onclick=@(() => SortTable("ID"))>Id </td>
 
         <td class="sort-link" @onclick=@(() => SortTable("Name"))>Name </td>
@@ -134,9 +136,13 @@
                 String formatted = dateNew.ToString("yyyy/MM/dd");
                 storeapp.Date = formatted;
             }
-            StoreApps = StoreApps.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x))
+            StoreApps = StoreApps.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x)).ToList();
         }
-        IsSortedAscending = !IsSortedAscending;
+        else
+        {
+            IsSortedAscending = !IsSortedAscending;
+        }
+
     }
 }
 
