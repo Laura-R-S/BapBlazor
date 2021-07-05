@@ -1,5 +1,5 @@
 using System;
-
+// this weatherForecast is linked to the models in the searchPage
 namespace BapBlazor.Data
 {
     public class WeatherForecast
