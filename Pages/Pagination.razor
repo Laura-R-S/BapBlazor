@@ -61,16 +61,14 @@
 
 @code {
 
-    // exmpty string to store response body 
+    // empty string to store response body 
     string responseBody = "";
 
-    // url with pointing to TwentyFive apps on a page 
+    // url pointing to TwentyFive apps on a page 
     string apiUrl = "https://localhost:44308/api/StoreApps/TwentyFive";
 
-    // cnew global list to store specific range of apps
+    // new global list to store specific range of apps
     List<StoreApp> StoreApps = new List<StoreApp>();
-
-    //List<StoreApp> StoreAppRange = new List<StoreApp>(); 
 
     // instantiating new object using StoreDetail class in StoreApps.cs
     // StoreDetail class gets and sets updated list and total pagecount 
@@ -94,7 +92,7 @@
         // the api name (url) is passed into the GetAsync method and it will wait for a response before continuing
         var httpResponse = await client.GetAsync(apiName);
 
-        // conditional statement to check is status code is successful (200)
+        // conditional statement to check if status code is successful (200)
         // resposnseBody variable waits for the content
         // once received it is passed onto JsonConvert 
         if (httpResponse.IsSuccessStatusCode) {
@@ -121,7 +119,7 @@
 
     }
 
-    // method to increment pages and calling requestTwentyFive() go update db 
+    // method to increment pages and calling requestTwentyFive() to update database
     // conditional statment to prevent current count going into negitive numbers 
     private void IncrementCount() {
         if (CurrentCount < pageCount) {
