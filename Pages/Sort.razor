@@ -60,7 +60,7 @@
     protected override async Task OnInitializedAsync()
     {
         //changed path to url of API which is running on different port
-        var apiName = "https://localhost:44308/api/StoreApps/FirstTen";
+        var apiName = "api/StoreApps/FirstTen";
 
         // the api name (url) is passed into the GetAsync method and it will wait for a response before continuing
         var httpResponse = await client.GetAsync(apiName);
