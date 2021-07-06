@@ -15,46 +15,46 @@
     </div>
 
     <div class="row" style="margin:25px;">
-       
-        @if (StoreApps != null)
-        {
-            <table class="table table-bordered table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Rating</th>
-                        <th>People</th>
-                        <th>Category</th>
-                        <th>Date</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                   
-                    @foreach (var storeapp in StoreApps)
-                    {
-                    <tr class="justify-content-center">
-                        <td>@storeapp.Id</td>
-                        <td>@storeapp.Name</td>
-                        <td>@storeapp.Rating</td>
-                        <td>@storeapp.People</td>
-                        <td>@storeapp.Category</td>
-                        <td>@storeapp.Date</td>
-                        <td>@storeapp.Price</td>
 
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        }    
-        @if (!StoreApps.Any())
-        {
-            <div class="justify-content-center">
-                <h5>No records to show</h5>
-            </div>
-        }
-    </div>
+                        @if (StoreApps != null)
+                        {
+                            <table class="table table-bordered table-striped">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Name</th>
+                                        <th>Rating</th>
+                                        <th>People</th>
+                                        <th>Category</th>
+                                        <th>Date</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach (var storeapp in StoreApps)
+                                    {
+                                        <tr class="justify-content-center">
+                                            <td>@storeapp.Id</td>
+                                            <td>@storeapp.Name</td>
+                                            <td>@storeapp.Rating</td>
+                                            <td>@storeapp.People</td>
+                                            <td>@storeapp.Category</td>
+                                            <td>@storeapp.Date</td>
+                                            <td>@storeapp.Price</td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        @if (!StoreApps.Any())
+                        {
+                            <div class="justify-content-center">
+                                <h5>No records to show</h5>
+                            </div>
+                        }
+</div>
    
 </div>
 
@@ -65,6 +65,7 @@
 
     private bool IsSortedAscending;
     List<StoreApp> StoreApps = new List<StoreApp>();
+
 
     // OnInitializedAsync() to call request
     protected override async Task OnInitializedAsync()
@@ -106,6 +107,7 @@
             <td class="sort-link" @onclick=@(() => SortTable("Date"))>Date </td>
 
             <td class="sort-link" @onclick=@(() => SortTable("Price"))>Price </td>
+        
 
 
         </tr>
@@ -135,37 +137,29 @@
 
 @code{
 
-    private void SortTable(string columnName)
-    {
-        if (IsSortedAscending)
+  
+        private void SortTable(string columnName)
         {
-
-            foreach (var storeapp in StoreApps)
-
+            if (IsSortedAscending)
             {
-                String sourceDate = storeapp.Date;
-                DateTime dateNew = DateTime.Parse(storeapp.Date);
-                String formatted = dateNew.ToString("yyyy/MM/dd");
-                storeapp.Date = formatted;
+
+                foreach (var storeapp in StoreApps)
+
+                {
+                    String sourceDate = storeapp.Date;
+                    DateTime dateNew = DateTime.Parse(storeapp.Date);
+                    String formatted = dateNew.ToString("yyyy/MM/dd");
+                    storeapp.Date = formatted;
+                }
+                StoreApps = StoreApps.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x)).ToList();
             }
-            StoreApps = StoreApps.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x)).ToList();
+            else
+            {
+
+                IsSortedAscending = !IsSortedAscending;
+
+            }
         }
-        else
-        {
-            
-            IsSortedAscending = !IsSortedAscending;
-        }
+
 
     }
-}
-
-
-
-}
-
-
-
-
-
-}
-}
