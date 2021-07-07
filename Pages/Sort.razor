@@ -159,47 +159,47 @@
 @code{
 
 
-        private void SortTable(string columnName)
+    private void SortTable(string columnName)
+    {
+        if (IsSortedAscending)
         {
-            if (IsSortedAscending)
+
+            foreach (var storeapp in StoreApps)
+
             {
-
-                foreach (var storeapp in StoreApps)
-
-                {
-                    String sourceDate = storeapp.Date;
-                    DateTime dateNew = DateTime.Parse(storeapp.Date);
-                    String formatted = dateNew.ToString("yyyy/MM/dd");
-                    storeapp.Date = formatted;
-                }
-                StoreApps = StoreApps.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x)).ToList();
+                String sourceDate = storeapp.Date;
+                DateTime dateNew = DateTime.Parse(storeapp.Date);
+                String formatted = dateNew.ToString("yyyy/MM/dd");
+                storeapp.Date = formatted;
             }
-            else
-            {
-
-                IsSortedAscending = !IsSortedAscending;
-
-            }
+            StoreApps = StoreApps.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x)).ToList();
         }
-        public async Task GetSortAsyncDSC(string order)
+        else
         {
-            var apiName = "api/StoreApps/Sort/dsc?coulmn=";
-            apiName += order;
-            var httpResponse = await client.GetAsync(apiName);
 
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                responseBody = await httpResponse.Content.ReadAsStringAsync();
-                StoreApps = JsonConvert.DeserializeObject<List<StoreApp>>(responseBody);
-                StateHasChanged();
-            }
+            IsSortedAscending = !IsSortedAscending;
 
         }
+    }
+    public async Task GetSortAsyncDSC(string order)
+    {
+        var apiName = "api/StoreApps/Sort/dsc?coulmn=";
+        apiName += order;
+        var httpResponse = await client.GetAsync(apiName);
 
-        public void OrderIdASC()
+        if (httpResponse.IsSuccessStatusCode)
         {
-            StoreApps.Sort((x, y) => x.Id.CompareTo(y.Id));
+            responseBody = await httpResponse.Content.ReadAsStringAsync();
+            StoreApps = JsonConvert.DeserializeObject<List<StoreApp>>(responseBody);
+            StateHasChanged();
         }
+
+    }
+
+    public void OrderIdASC()
+    {
+        StoreApps.Sort((x, y) => x.Id.CompareTo(y.Id));
+    }
 
     public void OrderIdDSC()
     {
@@ -258,4 +258,4 @@
 
 
 
-    }
+}

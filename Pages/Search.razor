@@ -14,11 +14,13 @@
 <p>This component demonstrates searching the datasaset.</p>
 
 
+<!--https://docs.microsoft.com/en-us/aspnet/core/blazor/forms-validation?view=aspnetcore-5.0 -->
+
 <EditForm Model="@searchModel" OnValidSubmit="@HandleSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <InputText id="name" @bind-Value="searchModel.InputValue" />
+    <InputText id="name" @bind-Value="searchModel.InputValue" /> 
     <button type="submit">Search</button>
 
 
@@ -38,10 +40,10 @@
 
 
 
-        @if (StoreApps != null)
+        @if (StoreApps != null) // The inequality operator != returns true if its operands are not equal, false otherwise.
         {
             <table class="table table-bordered table-striped">
-                <thead class="thead-light">
+                <thead class="thead-light"> 
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
@@ -95,14 +97,15 @@
 
 @code {
 
+    // Created a new object called “new SearchModel()”. It binds the Model attribute of the EditForm.
     SearchModel searchModel = new SearchModel();
 
-
+    // ResponseBody can return the response body in a String format.
     string responseBody = " ";
-    List<StoreApp> StoreApps = new List<StoreApp>();
+    List<StoreApp> StoreApps = new List<StoreApp>(); //The List<T> is a collection of strongly typed objects that can be accessed by index and having methods for sorting, searching, and modifying list. 
     List<StoreApp> AllStoreApps = new List<StoreApp>();
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync() //To perform an asynchronous operation, override OnInitializedAsync and use the await operator
     {
         //changed path to url of API which is running on different port
         var apiName = "https://team2-api.azurewebsites.net/api/StoreApps/";
@@ -130,21 +133,18 @@
         else
         {
 
-            StoreApps = AllStoreApps.Where(app => app.Name.ToUpper() == searchModel.InputValue.ToUpper()).ToList();
+            StoreApps = AllStoreApps.Where(app => app.Name.ToLower().Contains(searchModel.InputValue.ToLower())).ToList();
 
             if (StoreApps.Count() == 0)
             {
-                StoreApps = AllStoreApps.Where(app => app.Category.ToUpper() == searchModel.InputValue.ToUpper()).ToList();
+                StoreApps = AllStoreApps.Where(app => app.Category.ToLower().Contains(searchModel.InputValue.ToLower())).ToList();
             }
 
 
             Console.WriteLine(searchModel.InputValue);
-  
+
 
         }
-
-       
-
 
     }
 } 

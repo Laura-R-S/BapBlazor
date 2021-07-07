@@ -9,5 +9,6 @@ namespace BapBlazor.Data
     {
         public string InputValue { get; set; }
 
+
     }
 }
