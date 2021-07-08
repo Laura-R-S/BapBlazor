@@ -15,41 +15,66 @@
     </div>
 
     <div class="row" style="margin:25px;">
-       
-        @if (StoreApps != null)
-        {
-            <table class="table table-bordered table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Rating</th>
-                        <th>People</th>
-                        <th>Category</th>
-                        <th>Date</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                   
-                    @foreach (var storeapp in StoreApps)
-                    {
-                        <tr class="justify-content-center">
-                            <td>@storeapp.Id</td>
-                            <td>@storeapp.Name</td>
-                            
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }    
-        @if (!StoreApps.Any())
-        {
-            <div class="justify-content-center">
-                <h5>No records to show</h5>
-            </div>
-        }
-    </div>
+
+                        @if (StoreApps != null)
+                        {
+                            <table class="table table-bordered table-striped">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>
+                                            Id
+                                            <button @onclick="@OrderIdASC" value="Id">ASC</button>
+                                            <button @onclick="@OrderIdDSC" value="Id">DSC</button>
+                                        </th>
+                                        <th>
+                                            Name
+                                            <button @onclick="@OrderNameASC" value="Name">ASC</button>
+                                            <button @onclick="@OrderNameDSC" value="Name">DSC</button>
+                                        </th>
+                                        <th>
+                                            Rating
+                                            <button @onclick="@OrderRatingASC" value="Rating">ASC</button>
+                                            <button @onclick="@OrderRatingDSC" value="Rating">DSC</button>
+                                        </th>
+                                        <th>
+                                           Price
+                                            <button @onclick="@OrderPriceASC" value="Price">ASC</button>
+                                            <button @onclick="@OrderPriceDSC" value="Price">DSC</button>
+                                        </th>
+                                        <th>Id</th>
+                                        <th>Name</th>
+                                        <th>Rating</th>
+                                        <th>People</th>
+                                        <th>Category</th>
+                                        <th>Date</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach (var storeapp in StoreApps)
+                                    {
+                                        <tr class="justify-content-center">
+                                            <td>@storeapp.Id</td>
+                                            <td>@storeapp.Name</td>
+                                            <td>@storeapp.Rating</td>
+                                            <td>@storeapp.People</td>
+                                            <td>@storeapp.Category</td>
+                                            <td>@storeapp.Date</td>
+                                            <td>@storeapp.Price</td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        @if (!StoreApps.Any())
+                        {
+                            <div class="justify-content-center">
+                                <h5>No records to show</h5>
+                            </div>
+                        }
+</div>
    
 </div>
 
@@ -61,8 +86,10 @@
     private bool IsSortedAscending;
     List<StoreApp> StoreApps = new List<StoreApp>();
 
+ 
+
     // OnInitializedAsync() to call request
-    protected override async Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
     {
         //changed path to url of API which is running on different port
         var apiName = "https://team2-api.azurewebsites.net/api/StoreApps/";
@@ -101,6 +128,7 @@
             <td class="sort-link" @onclick=@(() => SortTable("Date"))>Date </td>
 
             <td class="sort-link" @onclick=@(() => SortTable("Price"))>Price </td>
+        
 
 
         </tr>
@@ -130,37 +158,104 @@
 
 @code{
 
-    private void SortTable(string columnName)
-    {
-        if (IsSortedAscending)
+
+        private void SortTable(string columnName)
         {
-
-            foreach (var storeapp in StoreApps)
-
+            if (IsSortedAscending)
             {
-                String sourceDate = storeapp.Date;
-                DateTime dateNew = DateTime.Parse(storeapp.Date);
-                String formatted = dateNew.ToString("yyyy/MM/dd");
-                storeapp.Date = formatted;
+
+                foreach (var storeapp in StoreApps)
+
+                {
+                    String sourceDate = storeapp.Date;
+                    DateTime dateNew = DateTime.Parse(storeapp.Date);
+                    String formatted = dateNew.ToString("yyyy/MM/dd");
+                    storeapp.Date = formatted;
+                }
+                StoreApps = StoreApps.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x)).ToList();
             }
-            StoreApps = StoreApps.OrderByDescending(x => x.GetType().GetProperty(columnName).GetValue(x)).ToList();
+            else
+            {
+
+                IsSortedAscending = !IsSortedAscending;
+
+            }
         }
-        else
+        public async Task GetSortAsyncDSC(string order)
         {
-            
-            IsSortedAscending = !IsSortedAscending;
+            var apiName = "api/StoreApps/Sort/dsc?coulmn=";
+            apiName += order;
+            var httpResponse = await client.GetAsync(apiName);
+
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                responseBody = await httpResponse.Content.ReadAsStringAsync();
+                StoreApps = JsonConvert.DeserializeObject<List<StoreApp>>(responseBody);
+                StateHasChanged();
+            }
+
         }
+
+        public void OrderIdASC()
+        {
+            StoreApps.Sort((x, y) => x.Id.CompareTo(y.Id));
+        }
+
+    public void OrderIdDSC()
+    {
+        StoreApps.Sort((x, y) => y.Id.CompareTo(x.Id));
+    }
+
+    public void OrderNameASC()
+    {
+        StoreApps.Sort((x, y) => x.Name.CompareTo(y.Name));
+    }
+
+    public void OrderNameDSC()
+    {
+        StoreApps.Sort((x, y) => y.Name.CompareTo(x.Name));
+    }
+
+    public void OrderRatingASC()
+    {
+        StoreApps.Sort((x, y) => x.Rating.CompareTo(y.Rating));
+    }
+
+    public void OrderRatingDSC()
+    {
+        StoreApps.Sort((x, y) => y.Rating.CompareTo(x.Rating));
+    }
+
+    public void OrderPriceASC()
+    {
+        StoreApps.Sort((x, y) => x.Price.CompareTo(y.Price));
+    }
+
+    public void OrderPriceDSC()
+    {
+        StoreApps.Sort((x, y) => y.Price.CompareTo(x.Price));
+    }
+
+    public void OrderPeopleASC()
+    {
+        StoreApps.Sort((x, y) => x.People.CompareTo(y.People));
+    }
+
+    public void OrderPeopleDSC()
+    {
+        StoreApps.Sort((x, y) => y.People.CompareTo(x.People));
+    }
+
+    public void OrderCategoryASC()
+    {
+        StoreApps.Sort((x, y) => x.Category.CompareTo(y.Category));
+    }
+
+    public void OrderCategoryDSC()
+    {
+        StoreApps.Sort((x, y) => y.Category.CompareTo(x.Category));
+    }
+
+
 
     }
-}
-
-
-
-}
-
-
-
-
-
-}
-}
